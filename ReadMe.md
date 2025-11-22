@@ -4,12 +4,19 @@ This is the official github repository for the paper Fractured Glass, Failing Ca
 
 Steps:-
 
+```python
 pip install -r requirements.txt
+```
+### For simulation
 
-For simulation:
+For simulating glass patterns. Set the parameters as desired or use the default parameters.
+
+```python
 python simulation.py
+```
 
-For PBR
+###  For PBR
+To overlay the simulated pattern on an existing image
+```
 python PBR.py
-
-Detailed codebase will follow post paper acceptance.
+```
