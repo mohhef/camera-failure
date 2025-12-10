@@ -28,12 +28,21 @@ def generate_glass(
         IMPACT_ANGLE = 35,
         K = 1,
         N = 1e5,
-        SUN_ANGLE=90
+        SUN_ANGLE=90,
+        IMPACT_X=None,
+        IMPACT_Y=None,
+        show_plot=True
 ):
     N = (int)(N)
     points = np.random.uniform(low=[0,0] ,high=[H,W], size=(N,2)).astype('int')
-    
-    impact_pt_idx = np.random.randint(low=0,high=N)
+
+    # Allow configurable impact point
+    if IMPACT_X is not None and IMPACT_Y is not None:
+        target = np.array([int(H * IMPACT_Y), int(W * IMPACT_X)])
+        distances = np.linalg.norm(points - target, axis=1)
+        impact_pt_idx = np.argmin(distances)
+    else:
+        impact_pt_idx = np.random.randint(low=0,high=N)
     IMPACT_POINT = np.array([points[impact_pt_idx]]) # Adding an extra dimension (2,) -> (1,2)
     IMPACT_ANGLE = 35
 
@@ -91,17 +100,24 @@ def generate_glass(
                 line_color = (grey_value,grey_value,grey_value)
                 cv2.line(broken_glass_img3, start_point, end_point, line_color, thickness=1)
 
-    plt.imshow(broken_glass_img3)
-    plt.axis('off')
-    plt.show()
-
-    
-    if len(SP.all_edges.keys())>=2:
-        img = generate_glass_image(all_edges = SP.all_edges,H=H,W=W,pts_img=broken_glass_img,sun_angle=sun_angle)
-
-        plt.imshow(np.maximum(img,broken_glass_img3))
+    if show_plot:
+        plt.imshow(broken_glass_img3)
         plt.axis('off')
         plt.show()
+
+
+    if len(SP.all_edges.keys())>=2:
+        img = generate_glass_image(all_edges = SP.all_edges,H=H,W=W,pts_img=broken_glass_img,sun_angle=sun_angle)
+        result = np.maximum(img,broken_glass_img3)
+
+        if show_plot:
+            plt.imshow(result)
+            plt.axis('off')
+            plt.show()
+
+        return result
+
+    return broken_glass_img3
 
 if __name__=='__main__':
     for i in range(1):
